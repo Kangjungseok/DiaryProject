@@ -1,7 +1,7 @@
+package myTest;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Rectangle;
-import java.awt.Scrollbar;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.time.LocalDate;
@@ -14,17 +14,18 @@ import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
 
-public class PanelTest extends JFrame {
+public class PanelTest_debounceTimerEx extends JFrame {
 
 	private JPanel contentPane;
 	private JTable table;
 	private boolean adjusting;
+	private Timer debounceTimer;
+    private final int DEBOUNCE_DELAY = 200; // 디바운스 지연 시간 설정 (200ms)
 	
 	private Thread thread1 = new Thread();
 
@@ -35,7 +36,7 @@ public class PanelTest extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					PanelTest frame = new PanelTest();
+					PanelTest_debounceTimerEx frame = new PanelTest_debounceTimerEx();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -47,7 +48,7 @@ public class PanelTest extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public PanelTest() {
+	public PanelTest_debounceTimerEx() {
 		setBounds(new Rectangle(0, 0, 1920, 1080));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(0, 0, 1920, 1080);
@@ -180,7 +181,6 @@ public class PanelTest extends JFrame {
 		scrollBar.setValue(500);
 
 		
-		
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 
 		panel.add(scrollPane);
@@ -197,102 +197,76 @@ public class PanelTest extends JFrame {
 				int initScroll = 300;
 				
 				
-				
-	if (scrollBar.getValue() >= (scrollBar.getMaximum() - scrollBar.getVisibleAmount())) {
-					
-					
-					if(!adjusting) {
-						adjusting =true;
-						new Thread(()->{
-							try {
-								Thread.sleep(100);
-							} catch (InterruptedException e1) {
-								e1.printStackTrace();
-							}
-							
-							// 스크롤이 오른쪽 끝에 닿으면 5개 열을 추가시킨다.
-							for(int i = 1 ; i<=addSize; i++) {
-								System.out.println("내가 lastIndex다 : " +lastIndexToAdd);
-								//columName은 LocalDate 타입. 마지막 인덱스의 columName을 읽어서 +i
-								LocalDate dateAdded = columNames.get(lastIndexToAdd).plusDays(i);
-								dtm.addColumn(dateAdded);
-								System.out.println("columName 추가됨" + columNames.get(lastIndexToAdd+i));
-								
-							}
-							
-							
-								//하나의 for문 안에 넣을 경우 연산속도가 너무 빨라 오류가 남.
-								for(int i = 1 ; i<=addSize; i++) {
-									System.out.println("내가 lastIndex다" +lastIndexToAdd);
-									//columName은 LocalDate 타입. 마지막 인덱스의 columName을 읽어서 +i
-									LocalDate dateAdded = columNames.get(lastIndexToAdd).plusDays(i);
-									dtm.setValueAt(dateAdded.getDayOfMonth(), 0, lastIndexToAdd+i);
-									System.out.println("dtm.setValue 실행됨, 추가된 값" + dtm.getValueAt(0, lastIndexToAdd+i));
-								}
-								adjusting =false;
-						}).start();
-					}
-					
-					System.out.println("scrollBar 이전 위치 : "+scrollBar.getValue());
-					scrollBar.setValue((scrollBar.getMaximum()+scrollBar.getMinimum())/2);
-					System.out.println("scrollBar 현재 위치 : "+scrollBar.getValue());
-				
-				/*
-				if (scrollBar.getValue() >= (scrollBar.getMaximum() - scrollBar.getVisibleAmount())) {
-					
-					adjusting = false;
-					
-					if(!adjusting) {
-							// 스크롤이 오른쪽 끝에 닿으면 5개 열을 추가시킨다.
-							for(int i = 1 ; i<=addSize; i++) {
-								System.out.println("내가 lastIndex다 : " +lastIndexToAdd);
-								//columName은 LocalDate 타입. 마지막 인덱스의 columName을 읽어서 +i
-								LocalDate dateAdded = columNames.get(lastIndexToAdd).plusDays(i);
-								dtm.addColumn(dateAdded);
-								System.out.println("columName 추가됨" + columNames.get(lastIndexToAdd+i));
-								
-							}
-							
-							
-								//하나의 for문 안에 넣을 경우 연산속도가 너무 빨라 오류가 남.
-								for(int i = 1 ; i<=addSize; i++) {
-									System.out.println("내가 lastIndex다" +lastIndexToAdd);
-									//columName은 LocalDate 타입. 마지막 인덱스의 columName을 읽어서 +i
-									LocalDate dateAdded = columNames.get(lastIndexToAdd).plusDays(i);
-									dtm.setValueAt(dateAdded.getDayOfMonth(), 0, lastIndexToAdd+i);
-									System.out.println("dtm.setValue 실행됨, 추가된 값" + dtm.getValueAt(0, lastIndexToAdd+i));
-								}
-								adjusting =true;
-						
-								System.out.println("scrollBar 이전 위치 : "+scrollBar.getValue());
-								scrollBar.setValue(scrollBar.getValue());
-								System.out.println("scrollBar 현재 위치 : "+scrollBar.getValue());
-					}
-					*/
-					//scrollBar.setValue(scrollBar.getMaximum() - scrollBar.getVisibleAmount() - initScroll);
-					
-					
-					
-					/*
-					if ((scrollBar.getMinimum() + scrollBar.getMinimum()) / 2 > scrollBar.getMaximum()
-							- scrollBar.getVisibleAmount()) {// 평균이 (최댓값과 스크롤바 크기의 차) 보다 오른쪽에 있다면 Max-initScroll
-						scrollBar.setValue(scrollBar.getMaximum() - scrollBar.getVisibleAmount() - initScroll);
-					} else {
-						scrollBar.setValue((scrollBar.getMinimum() + scrollBar.getMaximum()) / 2); // 평균에 놓을 수 있다면 평균으로
-					}
-					*/
-				}
-				
-				
-				
-				
-				
-				
-				
-				
-				
-			}
-		});
 
-	}
-}
+				 // 타이머가 실행 중이면 이전 작업을 취소하고 재설정합니다.
+                if (debounceTimer != null && debounceTimer.isRunning()) {
+                    debounceTimer.restart();
+                } else {
+                    // 타이머가 실행 중이 아니면 새로운 타이머를 생성합니다.
+                    debounceTimer = new Timer(DEBOUNCE_DELAY, actionEvent -> {
+                        // 스크롤 이벤트가 일정 시간 동안 발생하지 않았으므로 작업을 수행합니다.
+                        // 여기서 필요한 작업을 수행합니다.
+                        // ...
+                    	if (scrollBar.getValue() >= (scrollBar.getMaximum() - scrollBar.getVisibleAmount())) {
+        					
+                    		
+                    		
+        					
+        					if(!adjusting) {
+        						adjusting =true;
+        						new Thread(()->{
+        							try {
+        								Thread.sleep(100);
+        							} catch (InterruptedException e1) {
+        								e1.printStackTrace();
+        							}
+        							
+        							
+        							for(int i = 1 ; i<=addSize; i++) {
+        								System.out.println("내가 lastIndex다 : " +lastIndexToAdd);
+        								//columName은 LocalDate 타입. 마지막 인덱스의 columName을 읽어서 +i
+        								LocalDate dateAdded = columNames.get(lastIndexToAdd).plusDays(i);
+        								dtm.addColumn(dateAdded);
+        								System.out.println("columName 추가됨" + columNames.get(lastIndexToAdd+i));
+        								
+        							}
+        							
+        						
+        								for(int i = 1 ; i<=addSize; i++) {
+        									System.out.println("내가 lastIndex다" +lastIndexToAdd);
+        									
+        									LocalDate dateAdded = columNames.get(lastIndexToAdd).plusDays(i);
+        									dtm.setValueAt(dateAdded.getDayOfMonth(), 0, lastIndexToAdd+i);
+        									System.out.println("dtm.setValue 실행됨, 추가된 값" + dtm.getValueAt(0, lastIndexToAdd+i));
+        								}
+        								adjusting =false;
+        						}).start();
+        					}
+        					
+        					System.out.println("scrollBar 이전 위치 : "+scrollBar.getValue());
+        					scrollBar.setValue((scrollBar.getMaximum()+scrollBar.getMinimum())/2);
+        					System.out.println("scrollBar 현재 위치 : "+scrollBar.getValue());
+        				
+        				
+        				}
+                    });
+                    debounceTimer.setRepeats(false); // 타이머는 한 번만 실행되도록 설정합니다.
+                    debounceTimer.start(); // 타이머를 시작합니다.
+				
+				
+				
+	
+				
+				
+				
+				
+				
+				
+				
+				
+				
+                }
+		};
+
+	});
+}}
