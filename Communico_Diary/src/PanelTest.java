@@ -14,8 +14,10 @@ import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
@@ -176,17 +178,22 @@ public class PanelTest extends JFrame {
 		// 스크롤의 크기를 줄여서 왼쪽, 오른쪽으로 이동할 수 있게 만들자.
 		// scrollBar.setValues(50, 10, 0, 100);
 		
-		//스크롤바 초기 설정...그러나 전혀 먹지 않는다!!!!
-		scrollBar.setValue(500);
+		
 
 		
 		
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 
 		panel.add(scrollPane);
-		
-		//아래에다가 또 쓰니까 적용이 된다...근데 위에 걸 지우고 이 것만 적으면 또 안 된다...미치겠다  
-		scrollBar.setValue((scrollBar.getMinimum() + scrollBar.getMaximum()) / 2);
+		SwingUtilities.invokeLater(new Runnable() {
+	        public void run() {
+	            JScrollBar scrollBar = scrollPane.getHorizontalScrollBar();
+	            int minValue = scrollBar.getMinimum();
+	            int maxValue = scrollBar.getMaximum();
+	            int centerValue = (minValue + maxValue) / 2;
+	            scrollBar.setValue(centerValue);
+	        }
+	    });
 		
 		scrollBar.addAdjustmentListener(new AdjustmentListener() {
 
@@ -201,6 +208,33 @@ public class PanelTest extends JFrame {
 	if (scrollBar.getValue() >= (scrollBar.getMaximum() - scrollBar.getVisibleAmount())) {
 					
 					
+		// 스크롤이 오른쪽 끝에 닿으면 5개 열을 추가시킨다.
+		for(int i = 1 ; i<=addSize; i++) {
+			System.out.println("내가 lastIndex다 : " +lastIndexToAdd);
+			//columName은 LocalDate 타입. 마지막 인덱스의 columName을 읽어서 +i
+			LocalDate dateAdded = columNames.get(lastIndexToAdd).plusDays(i);
+			dtm.addColumn(dateAdded);
+			System.out.println("columName 추가됨" + columNames.get(lastIndexToAdd+i));
+			
+		}
+		
+		
+			//하나의 for문 안에 넣을 경우 연산속도가 너무 빨라 오류가 남.
+			for(int i = 1 ; i<=addSize; i++) {
+				System.out.println("내가 lastIndex다" +lastIndexToAdd);
+				//columName은 LocalDate 타입. 마지막 인덱스의 columName을 읽어서 +i
+				LocalDate dateAdded = columNames.get(lastIndexToAdd).plusDays(i);
+				dtm.setValueAt(dateAdded.getDayOfMonth(), 0, lastIndexToAdd+i);
+				System.out.println("dtm.setValue 실행됨, 추가된 값" + dtm.getValueAt(0, lastIndexToAdd+i));
+			}
+			
+			
+	}
+	
+	
+			
+			
+				/*
 					if(!adjusting) {
 						adjusting =true;
 						new Thread(()->{
@@ -236,6 +270,7 @@ public class PanelTest extends JFrame {
 					System.out.println("scrollBar 이전 위치 : "+scrollBar.getValue());
 					scrollBar.setValue((scrollBar.getMaximum()+scrollBar.getMinimum())/2);
 					System.out.println("scrollBar 현재 위치 : "+scrollBar.getValue());
+					*/
 				
 				/*
 				if (scrollBar.getValue() >= (scrollBar.getMaximum() - scrollBar.getVisibleAmount())) {
@@ -281,10 +316,9 @@ public class PanelTest extends JFrame {
 						scrollBar.setValue((scrollBar.getMinimum() + scrollBar.getMaximum()) / 2); // 평균에 놓을 수 있다면 평균으로
 					}
 					*/
-				}
 				
 				
-				
+			
 				
 				
 				

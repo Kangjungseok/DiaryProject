@@ -26,7 +26,7 @@ import javax.swing.table.DefaultTableModel;
 
 import net.miginfocom.swing.MigLayout;
 
-public class ListPanel extends JFrame {
+public class ListPanel2 extends JFrame {
 
 	private JPanel contentPane;
 	private JPanel titlePane;
@@ -59,7 +59,7 @@ public class ListPanel extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					ListPanel frame = new ListPanel();
+					ListPanel2 frame = new ListPanel2();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -71,7 +71,7 @@ public class ListPanel extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public ListPanel() {
+	public ListPanel2() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 577, 391);
 		contentPane = new JPanel();

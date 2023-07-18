@@ -125,6 +125,9 @@ public class ListPanelGrid extends JFrame {
 		*/
 		
 		//행 추가 라벨을 눌렀을 때 행이 추가되도록
+		int maxColumn = 3;
+		int maxRow = 2;
+		
 		
 		addLabel.addMouseListener(new MouseAdapter() {
 			@Override
@@ -132,19 +135,28 @@ public class ListPanelGrid extends JFrame {
 				System.out.println("버튼을 클릭했다");
 				
 				
-				for (int column = 0; column < 3; column++) {
-		            JLabel label = new JLabel("Label " + (column + 1));
-		            GridBagConstraints c = new GridBagConstraints();
-		            c.gridx = column; // 열 번호 설정
-		            c.gridy = 1; // 고정된 행 번호 (예제에서는 0으로 고정)
-		            //c.fill = GridBagConstraints.BOTH;
-		            //c.insets = new Insets(5, 5, 5, 5); // 셀 간격 조정
-		            panel.add(label, c);
-		            panel.repaint();
-		            
+				
+				
+				for(int row = gbc_panel.gridy+1; row <gbc_panel.gridy+2; row++) {
+					
+					for (int column = 0; column < maxColumn; column++) {
+			            JLabel label = new JLabel("Label " + (row + 1) + "-" + (column + 1));
+			            GridBagConstraints c = new GridBagConstraints();
+			            c.gridx = column; // 열 번호 설정
+			            c.gridy = row; // 고정된 행 번호 (예제에서는 0으로 고정)
+			            c.fill = GridBagConstraints.BOTH;
+			            //c.fill = GridBagConstraints.BOTH;
+			            //c.insets = new Insets(5, 5, 5, 5); // 셀 간격 조정
+			            panel.add(label, c);
+			            GridBagLayout gbl = new GridBagLayout();
+			            
+					}
 				}
 				
 				
+				panel.revalidate();
+		        panel.repaint();
+		        
 			}
 		});
 		
