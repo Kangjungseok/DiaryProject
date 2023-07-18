@@ -171,6 +171,9 @@ public class TableDataEx extends JFrame {
                         ex.printStackTrace();
                     }
                 }
+                if(e.getType() == TableModelEvent.DELETE) {
+                	
+                }
             }
         });
         
@@ -255,11 +258,12 @@ public class TableDataEx extends JFrame {
 			dto.setNum((int)table.getValueAt(selectedRow, 0));
 			try {
 				DAO.getinstance().deleteData(dto);
-				System.out.println("선택된 행 : " + selectedRow+1);
+				System.out.println("선택된 행 : " + (selectedRow+1));
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
 			dtm.fireTableDataChanged();
+			
     }
     
 }
